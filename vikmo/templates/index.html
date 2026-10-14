@@ -1,0 +1,583 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="VIKMO DealerDesk — Automotive spare parts distributor commerce backend and intelligence dashboard for 25 regional dealers and 600 catalogue products.">
+  <title>VIKMO DealerDesk — Automotive Distribution & Intelligence Platform</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Core Styles -->
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- Top Sticky Header -->
+    <header class="top-header">
+      <div class="header-content">
+        <div class="brand-section">
+          <div class="brand-logo">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+          </div>
+          <div class="brand-title-wrap">
+            <h1>VIKMO DealerDesk</h1>
+            <div class="brand-subtitle">Commercial Commerce &amp; Intelligence Hub</div>
+          </div>
+        </div>
+
+        <div class="header-controls">
+          <!-- Active Dealer Selector -->
+          <div class="dealer-select-box">
+            <span class="dealer-label">Acting Dealer</span>
+            <select id="global-dealer-select" class="dealer-select" aria-label="Select Active Dealer">
+              <option value="1">Loading regional dealers...</option>
+            </select>
+          </div>
+
+          <!-- Live PostgreSQL / Health Indicator -->
+          <div id="system-health-badge" class="system-status-badge">
+            <span class="status-dot"></span>
+            <span>PostgreSQL &amp; APIs Online</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-bar" aria-label="Main Navigation">
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-tab="overview" id="tab-btn-overview">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          <span>Executive Overview</span>
+        </button>
+
+        <button class="nav-tab" data-tab="products" id="tab-btn-products">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+          <span>Catalogue &amp; Inventory</span>
+          <span class="tab-badge">600 SKUs</span>
+        </button>
+
+        <button class="nav-tab" data-tab="orders" id="tab-btn-orders">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span>Orders &amp; Concurrency</span>
+        </button>
+
+        <button class="nav-tab" data-tab="assistant" id="tab-btn-assistant">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span>AI Dealer Assistant</span>
+          <span class="tab-badge" style="background: rgba(99, 102, 241, 0.25); color: #a5b4fc;">Copilot</span>
+        </button>
+
+        <button class="nav-tab" data-tab="forecast" id="tab-btn-forecast">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+          <span>Demand Forecast &amp; Reorder</span>
+          <span class="tab-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">ML</span>
+        </button>
+
+        <button class="nav-tab" data-tab="sync" id="tab-btn-sync">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+          <span>Supplier Sync</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="page-container">
+
+      <!-- ==================================================================== -->
+      <!-- VIEW: OVERVIEW -->
+      <!-- ==================================================================== -->
+      <section id="view-overview" class="tab-view active">
+        <!-- KPI Cards Grid -->
+        <div class="kpi-grid">
+          <div class="kpi-card cyan">
+            <div class="kpi-header">
+              <span class="kpi-label">Active SKUs</span>
+              <div class="kpi-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-total-products">600</div>
+            <div class="kpi-footer">100% Grounded in PostgreSQL</div>
+          </div>
+
+          <div class="kpi-card indigo">
+            <div class="kpi-header">
+              <span class="kpi-label">Regional Dealers</span>
+              <div class="kpi-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-active-dealers">25</div>
+            <div class="kpi-footer">Tamil Nadu, Karnataka, Kerala, AP</div>
+          </div>
+
+          <div class="kpi-card emerald">
+            <div class="kpi-header">
+              <span class="kpi-label">Total Orders</span>
+              <div class="kpi-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-total-orders">0</div>
+            <div class="kpi-footer">Row-locked concurrency control</div>
+          </div>
+
+          <div class="kpi-card amber">
+            <div class="kpi-header">
+              <span class="kpi-label">Reorder Alerts</span>
+              <div class="kpi-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-reorder-alerts">0</div>
+            <div class="kpi-footer">4-week demand prediction</div>
+          </div>
+        </div>
+
+        <!-- Quick Actions & System Info Panel -->
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+          <div class="glass-panel" style="margin-bottom: 0;">
+            <div class="panel-header">
+              <h2 class="panel-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                Recent Commercial Orders
+              </h2>
+              <button class="btn btn-primary btn-sm" onclick="switchTab('orders')">View All Orders →</button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Order #</th>
+                    <th>Dealer</th>
+                    <th>Lines</th>
+                    <th>Total (inc. GST)</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-orders-tbody">
+                  <tr><td colspan="6" style="text-align:center; padding: 2rem; color: var(--text-muted);">Loading recent orders...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Architecture & Integrity Highlights -->
+          <div class="glass-panel" style="margin-bottom: 0;">
+            <div class="panel-header">
+              <h2 class="panel-title" style="font-size: 1rem;">System Integrity</h2>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.9rem; font-size: 0.85rem;">
+              <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                <div style="color: #34d399; font-weight: bold; margin-top: 1px;">✓</div>
+                <div>
+                  <strong>select_for_update Row Locking</strong>
+                  <div style="color: var(--text-muted); font-size: 0.78rem;">Zero overselling under high concurrency</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                <div style="color: #34d399; font-weight: bold; margin-top: 1px;">✓</div>
+                <div>
+                  <strong>Exact 18% GST Arithmetic</strong>
+                  <div style="color: var(--text-muted); font-size: 0.78rem;">ROUND_HALF_UP quantized to the paisa (0.01)</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                <div style="color: #34d399; font-weight: bold; margin-top: 1px;">✓</div>
+                <div>
+                  <strong>Idempotent Supplier Sync</strong>
+                  <div style="color: var(--text-muted); font-size: 0.78rem;">Cursor navigation + 429 rate limit backoff</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                <div style="color: #34d399; font-weight: bold; margin-top: 1px;">✓</div>
+                <div>
+                  <strong>Native Tool-Calling Copilot</strong>
+                  <div style="color: var(--text-muted); font-size: 0.78rem;">Grounded search_parts &amp; check_stock</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================== -->
+      <!-- VIEW: CATALOGUE & INVENTORY -->
+      <!-- ==================================================================== -->
+      <section id="view-products" class="tab-view">
+        <div class="glass-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+              Automotive Spare Parts Catalogue
+            </h2>
+            <div class="panel-actions">
+              <!-- Search Input -->
+              <div class="search-input-wrap">
+                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="product-search-input" class="input-field" placeholder="Search SKU, name, fitment..." oninput="debounceProductSearch(this.value)" />
+              </div>
+
+              <!-- Category Filter -->
+              <select id="product-category-filter" class="select-field" onchange="filterProductCategory(this.value)">
+                <option value="">All Categories</option>
+                <option value="Brakes">Brakes</option>
+                <option value="Engine">Engine</option>
+                <option value="Transmission">Transmission</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Suspension">Suspension</option>
+                <option value="Filters">Filters</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Product Cards Grid -->
+          <div id="products-grid" class="products-cards-grid">
+            <!-- Dynamic product cards -->
+          </div>
+
+          <!-- Pagination -->
+          <div id="product-pagination"></div>
+        </div>
+      </section>
+
+      <!-- ==================================================================== -->
+      <!-- VIEW: ORDERS LIFECYCLE -->
+      <!-- ==================================================================== -->
+      <section id="view-orders" class="tab-view">
+        <div class="glass-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+              Dealer Orders &amp; Concurrency Engine
+            </h2>
+            <div class="panel-actions">
+              <select id="order-status-filter" class="select-field" onchange="filterOrderStatus(this.value)">
+                <option value="">All Statuses</option>
+                <option value="DRAFT">DRAFT</option>
+                <option value="CONFIRMED">CONFIRMED</option>
+                <option value="DISPATCHED">DISPATCHED</option>
+                <option value="DELIVERED">DELIVERED</option>
+                <option value="CANCELLED">CANCELLED</option>
+              </select>
+              <button id="btn-open-create-order" class="btn btn-primary">+ Create Draft Order</button>
+            </div>
+          </div>
+
+          <!-- Orders Table -->
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Order #</th>
+                  <th>Created At</th>
+                  <th>Items</th>
+                  <th>Subtotal</th>
+                  <th>Tax (18%)</th>
+                  <th>Total Amount</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Lifecycle Actions</th>
+                </tr>
+              </thead>
+              <tbody id="orders-table-tbody">
+                <!-- Dynamic order rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================== -->
+      <!-- VIEW: AI ASSISTANT COPILOT -->
+      <!-- ==================================================================== -->
+      <section id="view-assistant" class="tab-view">
+        <div class="assistant-layout">
+          <!-- Chat Messages Area -->
+          <div class="chat-card">
+            <div class="chat-header">
+              <div style="display:flex; align-items:center; gap: 0.6rem;">
+                <div style="width: 10px; height: 10px; background: #6366f1; border-radius: 50%; box-shadow: 0 0 10px #6366f1;"></div>
+                <strong style="font-size: 0.95rem;">Dealer Assistant Copilot</strong>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">(Grounded with Live PostgreSQL Tools)</span>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="resetChatSession()">New Session</button>
+            </div>
+
+            <div id="chat-messages" class="chat-messages">
+              <div class="message-bubble message-assistant">
+                Hello! I am your <strong>VIKMO DealerDesk AI Assistant</strong>. I am directly grounded in the live PostgreSQL database with native tool calling.
+                <br><br>
+                You can ask me to search fitments, check live inventory quantities, or prepare draft orders for your dealership!
+              </div>
+            </div>
+
+            <form id="chat-form" class="chat-input-area">
+              <input type="text" id="chat-input" class="chat-input" placeholder="Ask about brake pads, spark plugs, stock levels..." autocomplete="off" />
+              <button type="submit" class="btn btn-primary" id="chat-send-btn">Send</button>
+            </form>
+          </div>
+
+          <!-- Copilot Sidebar & Prompt Suggestions -->
+          <div class="glass-panel" style="margin-bottom: 0;">
+            <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.8rem; color: var(--text-main);">
+              Sample Inquiries
+            </h3>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem;">
+              Click any sample prompt below to trigger the assistant's tool-calling grounding loop:
+            </p>
+
+            <div class="prompt-chips">
+              <button class="chip-btn" data-prompt="Do you have brake pads for a Pulsar 150?">
+                🔍 "Do you have brake pads for a Pulsar 150?"
+              </button>
+              <button class="chip-btn" data-prompt="What chain sprocket sets fit the Duke 390?">
+                ⚙️ "What chain sprocket sets fit the Duke 390?"
+              </button>
+              <button class="chip-btn" data-prompt="Check stock for BRK-1044 and ENG-1001">
+                📦 "Check stock for BRK-1044 and ENG-1001"
+              </button>
+              <button class="chip-btn" data-prompt="Create a draft order for 2 of BRK-1044">
+                🛒 "Create a draft order for 2 of BRK-1044"
+              </button>
+            </div>
+
+            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+              <div style="font-size: 0.75rem; color: var(--text-faint); text-transform: uppercase; font-weight: 700; margin-bottom: 0.4rem;">
+                Available Tools
+              </div>
+              <ul style="font-size: 0.78rem; color: var(--text-muted); padding-left: 1.2rem; line-height: 1.6;">
+                <li><code>search_parts(query, vehicle)</code></li>
+                <li><code>check_stock(skus)</code></li>
+                <li><code>create_draft_order(dealer_id, items)</code></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================== -->
+      <!-- VIEW: DEMAND FORECAST & REORDER -->
+      <!-- ==================================================================== -->
+      <section id="view-forecast" class="tab-view">
+        <div class="glass-panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                AI/ML Demand Forecasting &amp; Safety Stock Recommendations
+              </h2>
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.3rem;">
+                Target 4-Week Horizon: 2026-09-28 to 2026-10-19 (Capturing Diwali seasonal lift &amp; dealer historical trends)
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="loadForecast()">Refresh Engine</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>SKU</th>
+                  <th>Current Stock</th>
+                  <th>4-Week Projected Demand</th>
+                  <th>Recommended Safety Stock</th>
+                  <th>Suggested Reorder</th>
+                  <th>Urgency Status</th>
+                  <th style="text-align: right;">Forecasting Breakdown</th>
+                </tr>
+              </thead>
+              <tbody id="forecast-table-tbody">
+                <!-- Dynamic forecast rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================== -->
+      <!-- VIEW: SUPPLIER SYNC -->
+      <!-- ==================================================================== -->
+      <section id="view-sync" class="tab-view">
+        <div class="glass-panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                Supplier Marketplace Synchronization Station
+              </h2>
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.3rem;">
+                Target Endpoint: <code>http://127.0.0.1:8099</code> with rate limit 429 auto-retry and updated_at deduplication
+              </div>
+            </div>
+            <button id="trigger-sync-btn" class="btn btn-primary" onclick="triggerSupplierSync()">Trigger Live Sync</button>
+          </div>
+
+          <div style="background: #020617; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
+            <div style="font-size: 0.78rem; color: var(--text-faint); font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase;">
+              Live Synchronization Terminal Output
+            </div>
+            <pre id="sync-terminal-log" style="font-family: var(--font-mono); font-size: 0.82rem; color: #38bdf8; min-height: 200px; max-height: 350px; overflow-y: auto; white-space: pre-wrap; line-height: 1.6;">
+[VIKMO Supplier Sync Client Initialized]
+- Feed cursor tracking enabled
+- Backoff strategy: Retry-After exponential delay
+- Ready for sync execution. Click "Trigger Live Sync" above.
+            </pre>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ====================================================================== -->
+  <!-- MODALS -->
+  <!-- ====================================================================== -->
+
+  <!-- 1. Stock Adjustment Modal -->
+  <div id="stock-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">
+          Adjust Stock: <span id="modal-stock-display-sku" class="sku-tag"></span>
+        </h3>
+        <button class="modal-close-trigger" style="background:none; border:none; color:var(--text-faint); font-size:1.2rem; cursor:pointer;">✕</button>
+      </div>
+      <form id="stock-adjust-form">
+        <div class="modal-body">
+          <input type="hidden" id="modal-stock-sku" />
+          <div style="margin-bottom: 1rem;">
+            <label style="display:block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.4rem; font-weight: 600;">NEW PHYSICAL QUANTITY</label>
+            <input type="number" id="modal-stock-qty" min="0" max="99999" class="input-field" required style="font-family: var(--font-mono);" />
+          </div>
+          <div style="margin-bottom: 1rem;">
+            <label style="display:block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.4rem; font-weight: 600;">REASON FOR ADJUSTMENT</label>
+            <select id="modal-stock-reason" class="select-field" style="width: 100%;">
+              <option value="stock count">Physical Stock Count / Audit</option>
+              <option value="supplier shipment">Supplier Replenishment Received</option>
+              <option value="damaged">Damaged / Written Off</option>
+              <option value="dealer return">Dealer Return Accepted</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary modal-close-trigger">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Quantity</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. Create Draft Order Modal -->
+  <div id="create-order-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">Create Draft Commercial Order</h3>
+        <button class="modal-close-trigger" style="background:none; border:none; color:var(--text-faint); font-size:1.2rem; cursor:pointer;">✕</button>
+      </div>
+      <form id="create-order-form">
+        <div class="modal-body">
+          <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Draft orders do not deduct stock immediately. Stock is reserved atomically when confirmed.
+          </div>
+          <div id="order-lines-container">
+            <!-- Dynamic order item rows -->
+          </div>
+          <button type="button" id="add-order-line-btn" class="btn btn-secondary btn-sm" style="margin-top: 0.5rem;">+ Add Line Item</button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary modal-close-trigger">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Draft Order</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. Generic Detail & Breakdown Modal -->
+  <div id="order-detail-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 720px;">
+      <div class="modal-header">
+        <h3 id="detail-modal-order-no" style="font-size: 1.1rem; font-weight: 700;">Details</h3>
+        <button class="modal-close-trigger" style="background:none; border:none; color:var(--text-faint); font-size:1.2rem; cursor:pointer;">✕</button>
+      </div>
+      <div id="detail-modal-body" class="modal-body">
+        <!-- Injected detail content -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary modal-close-trigger">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- App Script -->
+  <script src="{% static 'js/app.js' %}"></script>
+  <script>
+    // Search Debounce
+    let searchTimeout = null;
+    function debounceProductSearch(val) {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        AppState.productSearch = val.trim();
+        AppState.productPage = 1;
+        loadProducts();
+      }, 350);
+    }
+
+    function filterProductCategory(cat) {
+      AppState.productCategory = cat;
+      AppState.productPage = 1;
+      loadProducts();
+    }
+
+    function filterOrderStatus(status) {
+      AppState.orderFilterStatus = status;
+      loadOrders();
+    }
+
+    function resetChatSession() {
+      AppState.chatSessionId = 'session-' + Math.random().toString(36).substring(2, 9);
+      document.getElementById('chat-messages').innerHTML = `
+        <div class="message-bubble message-assistant">
+          Started a new session (ID: <code>${AppState.chatSessionId}</code>). How can I assist you with parts or stock today?
+        </div>
+      `;
+      showToast('New assistant conversation turn initialized', 'info');
+    }
+  </script>
+</body>
+</html>
